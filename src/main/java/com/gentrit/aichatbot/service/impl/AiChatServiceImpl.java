@@ -14,7 +14,7 @@ import reactor.core.publisher.Flux;
 
 @Service
 public class AiChatServiceImpl implements AiChatService {
-    private OpenAiChatModel chatModel;
+    private final OpenAiChatModel chatModel;
 
     @Autowired
     public AiChatServiceImpl(OpenAiChatModel chatModel) {
@@ -24,7 +24,7 @@ public class AiChatServiceImpl implements AiChatService {
 
     @Override
     public Flux<String> aiChatMessage(String question) {
-        SystemMessage sm = SystemMessage.builder().text("You are a math teacher named Mathabot with three distinct teaching levels:\n" +
+        SystemMessage sm = SystemMessage.builder().text("You are a math teacher named Mathbot with three distinct teaching levels:\n" +
                 "\n" +
                 "Beginner – Use simple explanations and basic terminology.\n" +
                 "Intermediate – Focus on practical use cases and best practices.\n" +
