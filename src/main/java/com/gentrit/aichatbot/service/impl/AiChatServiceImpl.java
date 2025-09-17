@@ -3,8 +3,6 @@ package com.gentrit.aichatbot.service.impl;
 import com.gentrit.aichatbot.service.AiChatService;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.model.ChatResponse;
-import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
@@ -42,7 +40,6 @@ public class AiChatServiceImpl implements AiChatService {
         Prompt prompt = Prompt.builder().messages(sm, um).chatOptions(chatOptions).build();
 
 //        ChatResponse chatResponse = chatModel.call(prompt);
-
 
         return chatModel.stream(prompt).mapNotNull(generation -> generation.getResult().getOutput().getText());
     }
