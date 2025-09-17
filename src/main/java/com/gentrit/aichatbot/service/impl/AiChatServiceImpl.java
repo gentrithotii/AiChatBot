@@ -41,10 +41,9 @@ public class AiChatServiceImpl implements AiChatService {
 
         Prompt prompt = Prompt.builder().messages(sm, um).chatOptions(chatOptions).build();
 
-        ChatResponse chatResponse = chatModel.call(prompt);
+//        ChatResponse chatResponse = chatModel.call(prompt);
 
-        Generation generation = chatResponse.getResult();
 
-        return Flux.just(generation.getOutput().getText());
+        return chatModel.stream(prompt).mapNotNull(generation -> generation.getResult().getOutput().getText());
     }
 }
