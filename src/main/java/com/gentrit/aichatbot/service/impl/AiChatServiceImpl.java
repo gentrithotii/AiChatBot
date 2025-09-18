@@ -1,5 +1,6 @@
 package com.gentrit.aichatbot.service.impl;
 
+import com.gentrit.aichatbot.dto.ExplanationLevel;
 import com.gentrit.aichatbot.service.AiChatService;
 import org.springframework.ai.chat.messages.SystemMessage;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -19,25 +20,41 @@ public class AiChatServiceImpl implements AiChatService {
         this.chatModel = chatModel;
     }
 
-
     @Override
-    public Flux<String> aiChatMessage(String question) {
-        SystemMessage sm = SystemMessage.builder().text("You are a math teacher named Mathbot with three distinct teaching levels: " +
-                "Beginner – Use simple explanations and basic terminology." +
-                "Intermediate – Focus on practical use cases and best practices." +
-                "Advanced – Explain deeper concepts, trade-offs, and optimizations. " +
-                "By default, use the Beginner level unless the user explicitly requests Intermediate or Advanced." +
-                "If the user’s wording suggests a level but doesn’t explicitly say it: Phrases like “in detail,” “deep dive,” “prove,” “trade-offs” → treat as Advanced. Phrases like “practical use,” “real-world example,” “best way” → treat as Intermediate." +
-                "Otherwise, remain at Beginner. If the user provides no input, create an example math problem with random numbers and explain it at any of the three levels. " +
-                "Be clear, concise, factual, and brief in your responses. If additional information is required, ask the user instead of guessing. Only handle topics related to mathematics. " +
-                "If asked something off-topic, politely inform the user that you are solely a math teacher. Respect any instructions provided by the user, if applicable.").build();
+    public Flux<String> aiChatMessage(String question, ExplanationLevel level) {
+        /*
+        Beginner – Use simple explanations and basic terminology.
+                Intermediate – Focus on practical use cases and best practices.
+                Advanced – Explain deeper concepts, trade-offs, and optimizations.
+         */
+        String chatLvl = "";
+        if (level.equals(ExplanationLevel.BEGINNER)) {
+            chatLvl = "Beginner - Use simple explanations and basic terminology.";
+        } else if (level.equals(ExplanationLevel.INTERMEDIATE)) {
+            chatLvl = "Intermediate - Focus on practical use cases and best practices.";
+        } else if (level.equals(ExplanationLevel.ADVANCED)) {
+            chatLvl = "Advanced - Explain deeper concepts, trade-offs, and optimizations";
+        }
+        String systemTemplate = String.format("""
+                You are a math teacher named Mathbot with teaching level of: 
+                %s
+                Be clear, concise, factual, and brief in your responses. If additional information is required, ask the user instead of guessing. Only handle topics related to mathematics. 
+                If asked something off-topic, politely inform the user that you are solely a math teacher. Respect any instructions provided by the user, if applicable.""", chatLvl);
+
+
+        OpenAiChatOptions chatOptions = OpenAiChatOptions.builder().temperature(0.5).maxCompletionTokens(1000).model("gpt-4.1-mini").build();
+
+
+        SystemMessage sm = SystemMessage.builder().text(systemTemplate).build();
+
 
         UserMessage um = UserMessage.builder().text(question).build();
 
 
-        OpenAiChatOptions chatOptions = OpenAiChatOptions.builder().temperature(0.2).maxCompletionTokens(2000).model("gpt-4.1-mini").build();
-
-        Prompt prompt = Prompt.builder().messages(sm, um).chatOptions(chatOptions).build();
+        Prompt prompt = Prompt.builder()
+                .messages(sm, um)
+                .chatOptions(chatOptions)
+                .build();
 
 //        ChatResponse chatResponse = chatModel.call(prompt);
 

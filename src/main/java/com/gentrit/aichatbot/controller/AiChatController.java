@@ -1,12 +1,14 @@
 package com.gentrit.aichatbot.controller;
 
+import com.gentrit.aichatbot.dto.ChatRequestDto;
 import com.gentrit.aichatbot.service.AiChatService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
+@Validated
 @RestController
 @RequestMapping("api/chat")
 public class AiChatController {
@@ -19,8 +21,8 @@ public class AiChatController {
     }
 
 
-    @GetMapping("/message")
-    Flux<String> chatWithAi(String question) {
-        return chatService.aiChatMessage(question);
+    @PostMapping("/message")
+    Flux<String> chatWithAi(@RequestBody @Valid ChatRequestDto chatRequestDto) {
+        return chatService.aiChatMessage(chatRequestDto.getQuestion(), chatRequestDto.getExplanationLevel());
     }
 }
