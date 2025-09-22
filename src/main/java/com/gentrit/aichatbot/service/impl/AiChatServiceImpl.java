@@ -23,10 +23,10 @@ public class AiChatServiceImpl implements AiChatService {
     @Override
     public Flux<String> aiChatMessage(String question, ExplanationLevel level) {
         /*
-        Beginner – Use simple explanations and basic terminology.
-                Intermediate – Focus on practical use cases and best practices.
-                Advanced – Explain deeper concepts, trade-offs, and optimizations.
-         */
+             Beginner – Use simple explanations and basic terminology.
+             Intermediate – Focus on practical use cases and best practices.
+             Advanced – Explain deeper concepts, trade-offs, and optimizations.
+        */
 
         String systemTemplate = String.format("""
                 You are a math teacher named Mathbot with teaching level of: 
